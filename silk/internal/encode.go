@@ -21,6 +21,7 @@ const (
 	MAX_INPUT_FRAMES    = 5
 	FRAME_LENGTH_MS     = 20
 	MAX_API_FS_KHZ      = 48
+	STX                 = 2
 )
 
 type EncodeCfg struct {

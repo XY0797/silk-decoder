@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	STX       byte = 2           // 文件开头如果是 0x02 解码时需要丢弃
+	FBYTE     byte = 35          // 文件开头如果不是'#'，那么解码时需要丢弃
 	Header         = "#!SILK_V3" // 文件头
 	HeaderLen      = len(Header) // 文件头长度 = 9
 	// 默认值
@@ -80,17 +80,14 @@ func checkHeader(reader *bufio.Reader) error {
 	// https://github.com/kn007/silk-v3-decoder/blob/master/silk/test/Decoder.c#L187
 	// 原始开源版本:(不识别 0x02 开头的文件)
 	// https://github.com/gaozehua/SILKCodec/blob/master/SILK_SDK_SRC_ARM/test/Decoder.c#L182
-	if first[0] == STX {
-		log("first byte is STX(%x), read it", STX)
-		stx, err := reader.ReadByte()
+	if first[0] != FBYTE {
+		log("first byte is not FBYTE(%x), read it", FBYTE)
+		fb, err := reader.ReadByte()
 		if err != nil {
 			warn("read first byte error: %+v", err)
 			return fmt.Errorf("failed to read first byte: %w", err)
 		}
-		if stx != STX {
-			warn("read first byte not STX: %x", stx)
-			return fmt.Errorf("invalid first byte: %d, expected=%d", stx, STX)
-		}
+		log("first byte is %x", fb)
 	}
 	// 文件头
 	var header = make([]byte, HeaderLen)
